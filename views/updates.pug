@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  a.back(href="/") ← Return to the homepage
+  .heading
+    div
+      p.eyebrow NEW RECORD
+      h1 Add an automation project
+      p.muted Create a project directly in the HubSpot test account.
+  if errors.length
+    .error(role="alert")
+      strong Please check the form
+      ul
+        each error in errors
+          li= error
+  form.card.form(action="/update-cobj" method="post")
+    input(type="hidden" name="_csrf" value=csrf)
+    each field in fields
+      .field
+        label(for=field.name)= field.label
+        input(id=field.name name=field.name type="text" required maxlength=field.max value=values[field.name] || '')
+    p.hint Example: Lead routing · n8n · Testing
+    .actions
+      button.button(type="submit") Create project
+      a(href="/") Cancel
