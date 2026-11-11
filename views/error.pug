@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  .heading
+    div
+      p.eyebrow REQUEST STATUS
+      h1 Unable to complete this request
+  p.error(role="alert")= message
+  a.button(href="/") Return to the homepage

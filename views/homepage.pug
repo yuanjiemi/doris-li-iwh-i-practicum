@@ -1,0 +1,31 @@
+extends layout
+
+block content
+  .heading
+    div
+      p.eyebrow PROJECT REGISTER
+      h1 Automation projects
+      p.muted Track the platform and workflow stage of each project.
+    a.button(href="/update-cobj") Add to this table
+  if created
+    p.notice(role="status") Project created in HubSpot. The table below reflects the latest CRM data.
+  .card
+    .table-wrap
+      table
+        caption.sr-only Automation projects from the HubSpot CRM
+        thead
+          tr
+            each field in fields
+              th(scope="col")= field.label
+        tbody
+          each record in records
+            tr
+              each field in fields
+                td= record.properties[field.name] || '—'
+          else
+            tr
+              td.empty(colspan="3") No projects yet. Add the first project to this table.
+  .pagination
+    a(href="/") First page
+    if next
+      a(href='/?after=' + encodeURIComponent(next)) Next page →

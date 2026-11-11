@@ -1,28 +1,52 @@
-# Welcome to the Integrating With HubSpot I: Foundations Practicum
+# Automation Project Register — HubSpot Foundations Practicum
 
-This repository is for the Integrating With HubSpot I: Foundations course. This practicum is one of two requirements for receiving your Integrating With HubSpot I: Foundations certification. You must also take the exam and receive a passing grade (at least 75%).
+A Node.js application for tracking automation projects in a HubSpot developer test account. Built from the official HubSpot Academy starter using Express, Axios, dotenv and Pug.
 
-To read the full directions, please go to the [practicum instructions](https://app.hubspot.com/academy/l/tracks/1092124/1093824/5493?language=en).
+## Data model
 
-**Put your HubSpot developer test account custom objects URL link here:** https://app.hubspot.com/contacts/l/objects/${custom-obj-number}/views/all/list
+Each project has three text properties: **Name** (`name`), **Platform** (`platform`) and **Workflow stage** (`workflow_stage`). Only synthetic demonstration projects are used.
 
-___
-## Tips:
-- Commit to your repository often. Even if you make small tweaks to your code, it’s best to be committing to your repository frequently.
-- The subject of the custom object is up to you. Feel free to get creative!
-- Please create a test account and include your private app access token in your repo.
-- Ensure you re-merge any working branches into the main branch.
-- DO NOT ADD YOUR PRIVATE APP TOKEN TO YOUR REPOSITORY. 
+Developer test account: **Doris Li IWH I Practicum**, ID **247969085**. Custom object type: **2-271654966**.
 
-## Pre-requisites:
-- Using [Node](https://nodejs.org/en/download) and node packages
-- Using [Express](https://expressjs.com/en/starter/installing.html)
-- Using [Axios](https://axios-http.com/docs/intro)
-- Using [Pug templating system](https://pugjs.org/api/getting-started.html)
-- Using the command line
-- Using [Git and GitHub](https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners)
+[Open the Automation Projects list in the developer test account](https://app-na2.hubspot.com/contacts/247969085/objects/2-271654966/views/all/list).
 
-## Requirements
-- All work must be your own. During the grading process we will check the revision history. Submissions that do not meet this requirement will not be considered.
-- You must have at least two new routes in your index.js file and one new pug template for the homepage.
-- You must create a developer test account and link to it in your README.md file. Submissions that do not meet this requirement will not be considered.
+The schema defines a bidirectional association with the Contacts object (`0-1`). All three custom properties are strings; Name is the primary display property.
+
+## Local setup
+
+1. Use Node.js 22 or later and run `npm ci`.
+2. Copy `.env.example` to `.env`.
+3. Set `HUBSPOT_PRIVATE_APP_TOKEN` and `HUBSPOT_OBJECT_TYPE` from the developer test account.
+4. Run `npm start` and open <http://127.0.0.1:3000>.
+
+Never commit `.env` or an access token. The server uses the token without sending it to a Pug template or browser. The server listens on loopback by default.
+
+## Required routes
+
+| Method | Route | Behavior |
+| --- | --- | --- |
+| GET | `/` | Read HubSpot records and render `homepage.pug` as a table. |
+| GET | `/update-cobj` | Render `updates.pug` with a form for the three properties. |
+| POST | `/update-cobj` | Validate, create a CRM record through the API and redirect to the table. |
+
+The table supports the HubSpot paging cursor. The form preserves values when validation or the API fails. Error messages do not expose credentials or request headers.
+
+## Validation
+
+Run `npm test` for HTTP integration tests using the real Express routes and Pug views with an isolated fake HubSpot transport. These tests do not claim live API verification. Live verification completed on 2026-11-11:
+
+- Created the custom schema and its association with Contacts through the HubSpot API.
+- Seeded three distinct project records and loaded them in the homepage table.
+- Opened `/update-cobj` in a browser, entered **Support ticket triage / Zapier / Prototype**, and submitted the form.
+- Confirmed HTTP 303 redirected to the homepage, where a fresh HubSpot GET displayed the fourth record.
+- Seven automated HTTP tests passed, including validation, error handling, escaping, paging and CSRF rejection.
+
+![Live application after creating a HubSpot record](docs/live-app.jpg)
+
+The optional `node scripts/setup-test-account.js` helper provisions the schema and sample records. It verifies the token belongs to test account 247969085 before writing; it will refuse a different account. It does not delete records or modify production accounts.
+
+## Attribution and submission
+
+Forked from [HubSpot Academy's official practicum starter](https://github.com/HubSpot-Academy/integrating-with-hubspot-i-foundations-practicum). Implementation and verification were prepared with Codex assistance; the learner should review and understand the source before submitting it under the course's own-work requirement.
+
+This repository is the submission artifact. No public deployment is required. Certification depends on HubSpot's manual review.
