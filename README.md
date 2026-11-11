@@ -6,7 +6,11 @@ A Node.js application for tracking automation projects in a HubSpot developer te
 
 Each project has three text properties: **Name** (`name`), **Platform** (`platform`) and **Workflow stage** (`workflow_stage`). Only synthetic demonstration projects are used.
 
-Developer test account: **Doris Li IWH I Practicum**, ID **247969085**. The verified CRM list link and final object type will be added after provisioning.
+Developer test account: **Doris Li IWH I Practicum**, ID **247969085**. Custom object type: **2-271654966**.
+
+[Open the Automation Projects list in the developer test account](https://app-na2.hubspot.com/contacts/247969085/objects/2-271654966/views/all/list).
+
+The schema defines a bidirectional association with the Contacts object (`0-1`). All three custom properties are strings; Name is the primary display property.
 
 ## Local setup
 
@@ -29,7 +33,17 @@ The table supports the HubSpot paging cursor. The form preserves values when val
 
 ## Validation
 
-Run `npm test` for HTTP integration tests using the real Express routes and Pug views with an isolated fake HubSpot transport. These tests do not claim live API verification. Live read/create/read verification will be documented after connecting the test account.
+Run `npm test` for HTTP integration tests using the real Express routes and Pug views with an isolated fake HubSpot transport. These tests do not claim live API verification. Live verification completed on 2026-11-11:
+
+- Created the custom schema and its association with Contacts through the HubSpot API.
+- Seeded three distinct project records and loaded them in the homepage table.
+- Opened `/update-cobj` in a browser, entered **Support ticket triage / Zapier / Prototype**, and submitted the form.
+- Confirmed HTTP 303 redirected to the homepage, where a fresh HubSpot GET displayed the fourth record.
+- Seven automated HTTP tests passed, including validation, error handling, escaping, paging and CSRF rejection.
+
+![Live application after creating a HubSpot record](docs/live-app.jpg)
+
+The optional `node scripts/setup-test-account.js` helper provisions the schema and sample records. It verifies the token belongs to test account 247969085 before writing; it will refuse a different account. It does not delete records or modify production accounts.
 
 ## Attribution and submission
 
